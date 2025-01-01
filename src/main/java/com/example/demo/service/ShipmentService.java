@@ -13,4 +13,8 @@ public interface ShipmentService {
     public List<Shipment> getAllShipments();
 
     public Shipment getShipmentById(int id);
+
+    public void saveShipment(Shipment shipment);
+
+    public void deleteShipment(int id);
 }

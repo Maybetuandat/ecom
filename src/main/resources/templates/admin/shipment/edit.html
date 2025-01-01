@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Edit Shipment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input {
+            display: block;
+            margin: 10px 0;
+            padding: 8px;
+            width: 300px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Edit Shipment</h1>
+    <form th:action="@{/admin/shipments/edit/{id}(id=${shipment.id})}" method="post" th:object="${shipment}">
+        <label for="shippingMethod">Shipping Method:</label>
+        <input type="text" id="shippingMethod" th:field="*{shippingMethod}" required>
+
+        <label for="shippingCost">Shipping Cost:</label>
+        <input type="number" id="shippingCost" th:field="*{shippingCost}" step="0.01" required>
+
+        <label for="deliveryDays">Delivery Days:</label>
+        <input type="number" id="deliveryDays" th:field="*{deliveryDays}" required>
+
+        <button type="submit">Update</button>
+    </form>
+</body>
+
+</html>

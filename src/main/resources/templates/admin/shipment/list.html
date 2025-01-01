@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Shipment List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .styled-table {
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 18px;
+            width: 100%;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+        }
+
+        .styled-table tr:nth-child(even) {
+            background-color: #f3f3f3;
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 8px 15px;
+            color: white;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+        }
+
+        .btn-edit {
+            background-color: #ffc107;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Shipment List</h1>
+    <a href="/admin/shipments/create" class="btn btn-primary">Add Shipment</a>
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Shipping Method</th>
+                <th>Shipping Cost</th>
+                <th>Delivery Days</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="shipment : ${shipments}">
+                <td th:text="${shipment.id}"></td>
+                <td th:text="${shipment.shippingMethod}"></td>
+                <td th:text="${shipment.shippingCost}"></td>
+                <td th:text="${shipment.deliveryDays}"></td>
+                <td>
+                    <a th:href="@{/admin/shipments/edit/{id}(id=${shipment.id})}" class="btn btn-edit">Edit</a>
+                    <a th:href="@{/admin/shipments/delete/{id}(id=${shipment.id})}" class="btn btn-delete">Delete</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>
