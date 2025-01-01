@@ -49,4 +49,9 @@ public class StaffServiceImpl implements StaffService {
         return repository.save(existingStaff);
     }
 
+    @Override
+    public Staff getStaffByEmail(String email) {
+        return repository.findByEmail(email);
+    }
+
 }

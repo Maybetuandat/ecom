@@ -20,6 +20,10 @@
 
     <div class="container p-5">
         <p class="text-center fs-3 mt-4"> Admin Dashboard</p>
+        <th:block th:if="${session.errorMsg}">
+            <p class="text-danger fw-bold text-center">[[${session.errorMsg}]]</p>
+            <th:block th:text="${@commonServiceImpl.removeSessionMessage}"></th:block>
+        </th:block>
         <div class="row p-5">
 
 

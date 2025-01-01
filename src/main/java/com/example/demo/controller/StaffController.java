@@ -3,6 +3,9 @@ package com.example.demo.controller;
 import com.example.demo.model.Staff;
 import com.example.demo.service.CustomerService;
 import com.example.demo.service.StaffService;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,9 +21,21 @@ public class StaffController {
     private CustomerService customerService;
 
     @GetMapping
-    public String viewAllStaff(Model model) {
-        model.addAttribute("staffList", staffService.getAllStaff());
-        return "/admin/staff/index";
+    public String viewAllStaff(Model model, HttpSession session) {
+
+        if (session.getAttribute("admin") == null) {
+            return "redirect:/admin/login";
+        }
+        Staff staff = (Staff) session.getAttribute("admin");
+
+        if (staff.getRole().equals("admin") || staff.getRole().equals("manager")) {
+            model.addAttribute("staffList", staffService.getAllStaff());
+            return "/admin/staff/index";
+        } else {
+            session.setAttribute("errorMsg", "You do not have permission to access this page");
+            return "redirect:/admin";
+        }
+
     }
 
     @GetMapping("/create")

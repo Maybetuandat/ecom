@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.model.Customer;
+import com.example.demo.model.Staff;
 import com.example.demo.service.CustomerService;
 
 import jakarta.servlet.http.HttpSession;
@@ -63,9 +64,21 @@ public class CustomerController {
     }
 
     @GetMapping("/admin/customer")
-    public String listCustomers(Model model) {
-        model.addAttribute("customerList", customerService.getAllCustomers());
-        return "admin/customer/list";
+    public String listCustomers(Model model, HttpSession session) {
+
+        if (session.getAttribute("admin") == null) {
+            return "redirect:/admin/login";
+        }
+        Staff staff = (Staff) session.getAttribute("admin");
+
+        if (staff.getRole().equals("admin")) {
+            model.addAttribute("customerList", customerService.getAllCustomers());
+            return "admin/customer/list";
+        } else {
+            session.setAttribute("errorMsg", "You do not have permission to access this page");
+            return "redirect:/admin";
+        }
+
     }
 
     @GetMapping("/admin/customer/delete/{id}")

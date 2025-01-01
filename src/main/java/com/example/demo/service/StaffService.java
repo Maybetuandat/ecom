@@ -17,4 +17,6 @@ public interface StaffService {
     public void deleteStaff(Integer id);
 
     public Staff updateStaff(Integer id, Staff staff);
+
+    public Staff getStaffByEmail(String email);
 }

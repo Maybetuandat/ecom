@@ -7,7 +7,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import com.example.demo.model.Payment;
+import com.example.demo.model.Staff;
 import com.example.demo.service.PaymentService;
+
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,10 +29,21 @@ public class PaymentController {
 
     // Danh sách phương thức thanh toán
     @GetMapping
-    public String index(Model model) {
-        List<Payment> payments = paymentService.getAllPayments();
-        model.addAttribute("payments", payments);
-        return "admin/index_payment";
+    public String index(Model model, HttpSession session) {
+
+        if (session.getAttribute("admin") == null) {
+            return "redirect:/admin/login";
+        }
+        Staff staff = (Staff) session.getAttribute("admin");
+        if (staff.getRole().equals("admin")) {
+            List<Payment> payments = paymentService.getAllPayments();
+            model.addAttribute("payments", payments);
+            return "admin/index_payment";
+        } else {
+            session.setAttribute("errorMsg", "You do not have permission to access this page");
+            return "redirect:/admin";
+        }
+
     }
 
     // Form thêm mới

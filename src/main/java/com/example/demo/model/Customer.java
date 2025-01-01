@@ -51,6 +51,8 @@ public class Customer {
     private String password;
 
     private int status;
+    @Column(length = 500)
+    private String role;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> items = new ArrayList<>();

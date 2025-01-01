@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ import com.example.demo.model.Order;
 import com.example.demo.model.OrderDetail;
 import com.example.demo.model.Payment;
 import com.example.demo.model.Shipment;
+import com.example.demo.model.Staff;
 import com.example.demo.service.OrderDetailService;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.PaymentService;
@@ -114,10 +116,22 @@ public class OrderController {
     }
 
     @GetMapping("/admin/viewOrder")
-    public String viewOrder(Model model) {
-        List<Order> orders = orderService.getAllOrders();
-        model.addAttribute("orders", orders);
-        return "admin/viewOrder";
+    public String viewOrder(Model model, HttpSession session) {
+
+        if (session.getAttribute("admin") == null) {
+            return "redirect:/admin/login";
+        }
+        Staff staff = (Staff) session.getAttribute("admin");
+
+        if (staff.getRole().equals("admin") || staff.getRole().equals("manager")
+                || staff.getRole().equals("processorder")) {
+            List<Order> orders = orderService.getAllOrders();
+            model.addAttribute("orders", orders);
+            return "admin/viewOrder";
+        } else {
+            session.setAttribute("errorMsg", "You do not have permission to access this page");
+            return "redirect:/admin";
+        }
     }
 
     @GetMapping("/admin/order_details/{id}")

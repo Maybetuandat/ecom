@@ -28,6 +28,7 @@ import com.example.demo.model.CartItem;
 import com.example.demo.model.Category;
 import com.example.demo.model.Customer;
 import com.example.demo.model.Item;
+import com.example.demo.model.Staff;
 import com.example.demo.repository.BookRepository;
 import com.example.demo.repository.ElectronicsRepository;
 import com.example.demo.repository.LaptopRepository;
@@ -69,21 +70,68 @@ public class ItemController {
     @Autowired
     ElectronicsRepository electronicsRepository;
 
+    // @SuppressWarnings("unchecked")
+    // @GetMapping("/")
+    // public String index(Model model, HttpSession session, @RequestParam(name =
+    // "search", required = false) String searchKeyword) {
+
+    // Boolean isConditionMet = (Boolean) session.getAttribute("conditionMet");
+    // model.addAttribute("showDialog", isConditionMet);
+    // List<Item> products = itemService.getAllItems();
+    // model.addAttribute("products", products);
+    // System.out.println(products);
+
+    // if (session.getAttribute("customer") != null) {
+    // // Lấy danh sách các CartItem từ dịch vụ
+    // Object cartItemsObj = cartItemService
+    // .getAllCartItems(((Customer) session.getAttribute("customer")).getId());
+
+    // // Kiểm tra nếu đối tượng trả về là loại PersistentBag (hoặc List)
+    // Set<CartItem> cartItems = new HashSet<>();
+    // if (cartItemsObj instanceof Set<?>) {
+    // cartItems = (Set<CartItem>) cartItemsObj;
+    // } else if (cartItemsObj instanceof List<?>) {
+    // cartItems.addAll((List<CartItem>) cartItemsObj);
+    // }
+
+    // // Thêm vào model số lượng item trong giỏ hàng
+    // model.addAttribute("numberOfItemInCart", cartItems.size());
+    // }
+
+    // // System.out.println(products);
+    // return "index";
+
+    // }
+
     @SuppressWarnings("unchecked")
     @GetMapping("/")
-    public String index(Model model, HttpSession session) {
+    public String index(Model model, HttpSession session,
+            @RequestParam(name = "search", required = false) String searchKeyword) {
+
+        // Hiển thị hộp thoại (nếu có)
         Boolean isConditionMet = (Boolean) session.getAttribute("conditionMet");
         model.addAttribute("showDialog", isConditionMet);
-        List<Item> products = itemService.getAllItems();
-        model.addAttribute("products", products);
-        System.out.println(products);
 
+        // Lấy danh sách tất cả sản phẩm
+        List<Item> products = itemService.getAllItems();
+
+        // Lọc danh sách sản phẩm nếu có từ khóa tìm kiếm
+        if (searchKeyword != null && !searchKeyword.isEmpty()) {
+            products = products.stream()
+                    .filter(item -> item.getName().toLowerCase().contains(searchKeyword.toLowerCase()))
+                    .toList();
+            model.addAttribute("searchKeyword", searchKeyword); // Truyền từ khóa vào model để hiển thị lại trên form
+        }
+
+        // Thêm sản phẩm vào model
+        model.addAttribute("products", products);
+
+        // Kiểm tra giỏ hàng nếu có thông tin khách hàng trong session
         if (session.getAttribute("customer") != null) {
-            // Lấy danh sách các CartItem từ dịch vụ
             Object cartItemsObj = cartItemService
                     .getAllCartItems(((Customer) session.getAttribute("customer")).getId());
 
-            // Kiểm tra nếu đối tượng trả về là loại PersistentBag (hoặc List)
+            // Kiểm tra kiểu dữ liệu của cartItemsObj
             Set<CartItem> cartItems = new HashSet<>();
             if (cartItemsObj instanceof Set<?>) {
                 cartItems = (Set<CartItem>) cartItemsObj;
@@ -91,11 +139,10 @@ public class ItemController {
                 cartItems.addAll((List<CartItem>) cartItemsObj);
             }
 
-            // Thêm vào model số lượng item trong giỏ hàng
+            // Thêm số lượng sản phẩm trong giỏ hàng vào model
             model.addAttribute("numberOfItemInCart", cartItems.size());
         }
 
-        // System.out.println(products);
         return "index";
     }
 
@@ -153,16 +200,39 @@ public class ItemController {
     // }
 
     @GetMapping("/admin/loadAddProduct")
-    public String loadAddProduct() {
-        return "admin/add_product";
+    public String loadAddProduct(HttpSession session) {
+        if (session.getAttribute("admin") == null) {
+            return "redirect:/admin/login";
+        }
+        Staff staff = (Staff) session.getAttribute("admin");
+        if (staff.getRole().equals("admin") || staff.getRole().equals("manager")) {
+            return "admin/add_product";
+        } else {
+            session.setAttribute("errorMsg", "You do not have permission to access this page");
+            return "redirect:/admin";
+        }
+
     }
 
     @GetMapping("/admin/loadViewProduct")
-    public String loadViewProduct(Model model) {
-        List<Item> products = itemService.getAllItems();
-        // System.out.println(products);
-        model.addAttribute("products", products);
-        return "admin/view_product";
+    public String loadViewProduct(Model model, HttpSession session) {
+
+        if (session.getAttribute("admin") == null) {
+            return "redirect:/admin/login";
+        }
+        Staff staff = (Staff) session.getAttribute("admin");
+
+        if (staff.getRole().equals("admin") || staff.getRole().equals("manager")
+                || staff.getRole().equals("warehouse")) {
+            List<Item> products = itemService.getAllItems();
+            // System.out.println(products);
+            model.addAttribute("products", products);
+            return "admin/view_product";
+        } else {
+            session.setAttribute("errorMsg", "You do not have permission to access this page");
+            return "redirect:/admin";
+        }
+
     }
 
     @GetMapping("/admin/deleteProduct/{id}")

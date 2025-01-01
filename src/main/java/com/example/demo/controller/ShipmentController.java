@@ -1,7 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Shipment;
+import com.example.demo.model.Staff;
 import com.example.demo.service.ShipmentService;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +20,17 @@ public class ShipmentController {
 
     // Danh sách shipment
     @GetMapping
-    public String listShipments(Model model) {
+    public String listShipments(Model model, HttpSession session) {
+
+        if (session.getAttribute("admin") == null) {
+            return "redirect:/admin/login";
+        }
+        Staff staff = (Staff) session.getAttribute("admin");
+
+        if (!staff.getRole().equals("admin")) {
+            session.setAttribute("errorMsg", "You do not have permission to access this page");
+            return "redirect:/admin";
+        }
         model.addAttribute("shipments", shipmentService.getAllShipments());
         return "admin/shipment/list";
     }

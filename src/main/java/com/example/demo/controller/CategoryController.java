@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.model.Category;
 import com.example.demo.model.Customer;
 import com.example.demo.model.Item;
+import com.example.demo.model.Staff;
 import com.example.demo.service.CategoryService;
 import com.example.demo.service.CustomerService;
 import com.example.demo.service.ItemService;
@@ -46,15 +47,28 @@ public class CategoryController {
     CustomerService customerService;
 
     @GetMapping({ "/", "" })
-    public String index() {
+    public String index(HttpSession session) {
 
+        if (session.getAttribute("admin") == null) {
+            return "redirect:/admin/login";
+        }
         return "admin/index";
     }
 
     @GetMapping("/category")
-    public String category(Model model) {
-        model.addAttribute("categories", categoryService.getAllCategories());
-        return "admin/category";
+    public String category(Model model, HttpSession session) {
+        if (session.getAttribute("admin") == null) {
+            return "redirect:/admin/login";
+        }
+        Staff staff = (Staff) session.getAttribute("admin");
+        if (staff.getRole().equals("admin") || staff.getRole().equals("manager")) {
+            model.addAttribute("categories", categoryService.getAllCategories());
+            return "admin/category";
+        } else {
+            session.setAttribute("errorMsg", "You do not have permission to access this page");
+            return "redirect:/admin";
+        }
+
     }
 
     @PostMapping("/saveCategory")
