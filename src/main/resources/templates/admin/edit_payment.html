@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Edit Payment Method</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            max-width: 400px;
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #138496;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Edit Payment Method</h1>
+    <form th:action="@{/admin/payment/edit}" method="post" th:object="${payment}">
+        <input type="hidden" th:field="*{id}">
+
+        <label for="paymentMethod">Payment Method:</label>
+        <input type="text" id="paymentMethod" th:field="*{paymentMethod}" placeholder="Enter payment method" required>
+
+        <label for="imageUrl">Image URL:</label>
+        <input type="text" id="imageUrl" th:field="*{imageUrl}" placeholder="Enter image URL">
+
+        <button type="submit">Update</button>
+    </form>
+</body>
+
+</html>

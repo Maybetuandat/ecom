@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+        integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f7f7;
+            padding: 40px;
+            margin: 0;
+            color: #555;
+        }
+
+        .checkout-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .checkout-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .checkout-header h1 {
+            font-size: 2.5em;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .summary-items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .summary-items th,
+        .summary-items td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #f1f1f1;
+        }
+
+        .summary-items th {
+            background-color: #007bff;
+            color: white;
+            font-weight: 600;
+        }
+
+        .summary-items td img {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .button-container {
+            text-align: center;
+        }
+
+        .submit-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 30px;
+            font-size: 1.2em;
+            text-decoration: none;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .total-amount {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        .shipping-method-table td i {
+            color: #007bff;
+        }
+
+
+
+        .payment-table td i {
+            color: #007bff;
+            /* Màu primary của Bootstrap */
+            font-size: 1.5em;
+            /* Kích thước icon (tùy chỉnh nếu cần) */
+        }
+
+        .payment-table td input[type="radio"] {
+            margin-right: 10px;
+            /* Tạo khoảng cách giữa radio button và nội dung */
+        }
+
+        /* Tạo khoảng cách xa hơn với phần phía trên */
+        .shipping-method-table {
+            margin-top: 30px;
+            /* Tăng khoảng cách giữa phần Shipping Method và phần trên */
+        }
+
+        /* Tăng kích thước icon và cỡ chữ */
+        .shipping-method-table td i {
+            color: #007bff;
+            /* Màu xanh dương primary của Bootstrap */
+            font-size: 1.5em;
+            /* Tăng kích thước icon */
+        }
+
+
+        /* Căn chỉnh thêm cho radio button */
+        .shipping-method-table td input[type="radio"] {
+            margin-right: 15px;
+            /* Tạo khoảng cách giữa radio và nội dung */
+        }
+    </style>
+</head>
+
+<body>
+    <form action="/checkout/complete" method="POST">
+        <div class="checkout-container">
+            <div class="checkout-header">
+                <h1>Checkout</h1>
+            </div>
+
+            <!-- Display order details -->
+            <h2>Order Details</h2>
+            <table class="summary-items">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item : ${selectedProducts}">
+                        <td>
+                            <img th:src="@{'/img/product_img/'+${item.product.imageUrl}}" alt="Product Image" />
+                        </td>
+                        <td th:text="${item.product.name}"></td>
+                        <td th:text="${item.quantity}"></td>
+                        <td th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'NONE') + ' $'}"></td>
+                        <td th:text="${#numbers.formatDecimal(item.subTotal, 0, 'COMMA', 0, 'NONE') + ' $'}"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <div class="amount-container" style="display: flex; justify-content: space-between; align-items: center;">
+                <p class="total-amount">
+                    <strong>Total Amount:</strong>
+                    <span id="totalAmount"
+                        th:text="${#numbers.formatDecimal(totalAmount != null ? totalAmount : 0, 0, 'COMMA', 0, 'NONE') + ' đ'}"></span>
+                </p>
+
+                <p class="total-amount">
+                    <strong>Shipping Fee:</strong>
+                    <span id="shippingFee"
+                        th:text="${#numbers.formatDecimal(shippingFee != null ? shippingFee : 0, 0, 'COMMA', 0, 'NONE') + ' đ'}"></span>
+                </p>
+            </div>
+            <input type="text" name="totalAmount" th:value="${totalAmount}" hidden />
+
+
+            <!-- Payment method -->
+            <h2>Payment Method</h2>
+            <table class="payment-table">
+                <tbody>
+                    <tr th:each="payment : ${payments}">
+                        <td>
+                            <input type="radio" th:id="'payment_' + ${payment.id}" th:name="paymentMethod"
+                                th:value="${payment.id}" required />
+                        </td>
+
+                        <td>
+                            <span th:if="${payment.paymentMethod == 'Credit Card'}">
+                                <i class="fas fa-credit-card payment-icon"></i>
+                            </span>
+                            <span th:if="${payment.paymentMethod == 'PayPal'}">
+                                <i class="fab fa-paypal payment-icon"></i>
+                            </span>
+                            <span th:if="${payment.paymentMethod == 'Bank Transfer'}">
+                                <i class="fas fa-university payment-icon"></i>
+                            </span>
+                            <span th:if="${payment.paymentMethod == 'Cash on delivery'}">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </span>
+                        </td>
+                        <td th:text="${payment.paymentMethod}"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Shipping method -->
+            <h2>Shipping Method</h2>
+            <table class="shipping-method-table">
+                <tbody>
+                    <tr th:each="shipment : ${shipments}">
+                        <td>
+                            <input type="radio" th:id="'shipment_' + ${shipment.id}" th:name="shippingMethod"
+                                th:value="${shipment.id}" required
+                                th:onclick="'updateTotalAmount(' + ${shipment.shippingCost} + ')'" />
+                        </td>
+
+
+                        <td>
+                            <span th:if="${shipment.shippingMethod == 'Ship by drone'}">
+                                <i class="fas fa-plane"></i>
+                            </span>
+                            <span th:if="${shipment.shippingMethod == 'Express Delivery'}">
+                                <i class="fas fa-truck"></i>
+                            </span>
+                            <span th:if="${shipment.shippingMethod == 'Economical Shipping'}">
+                                <i class="fas fa-store"></i>
+                            </span>
+                        </td>
+                        <td th:text="${shipment.shippingMethod}"></td>
+
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Payment and shipment information form -->
+
+            <div class="form-group" style="margin-top: 20px">
+                <h2 for="shippingAddress" style="margin-top: 20ppx;">Shipping Address</h2>
+
+                <input type="text" style="margin-top: 20px;" id="shippingAddress" name="shippingAddress"
+                    th:value="${session.customer.address}" required />
+            </div>
+
+
+            <div class="button-container d-flex justify-content-between" style="margin-top: 30px; margin-bottom: 20px;">
+                <a href="/viewCart" class="btn btn-danger">Return</a>
+                <button type="submit" class="btn btn-primary">Order</button>
+            </div>
+
+    </form>
+    </div>
+
+
+    <input type="number" id="origin" value="${totalAmount}" hidden />
+
+
+    <script>
+        function updateTotalAmount(shippingCost) {
+            var newTotalAmount = shippingCost;
+            document.getElementById('shippingFee').textContent = newTotalAmount.toLocaleString() + ' đ';
+        }
+    </script>
+
+</body>
+
+</html>

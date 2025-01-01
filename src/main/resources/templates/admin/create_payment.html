@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Add Payment Method</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            max-width: 400px;
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Add Payment Method</h1>
+    <form th:action="@{/admin/payment/create}" method="post" th:object="${payment}">
+        <label>Payment Method:</label>
+        <input type="text" th:field="*{paymentMethod}" placeholder="Enter payment method" required>
+        <br>
+        <label>Image URL:</label>
+        <input type="text" th:field="*{imageUrl}" placeholder="Enter image URL">
+        <br>
+        <button type="submit">Add</button>
+    </form>
+
+</body>
+
+</html>

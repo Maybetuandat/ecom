@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+
+<head>
+    <meta charset="ISO-8859-1">
+    <title th:text="${product.name}"></title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+        integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container p-5 mt-3">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card card-sh">
+                    <div class="card-header text-center ">
+                        <p class="fs-4">Edit Product</p>
+
+                        <th:block th:if="${session.successMsg}">
+                            <p class="text-success fw-bold ">[[${session.successMsg}]]</p>
+                            <th:block th:text="${@commonServiceImpl.removeSessionMessage}"></th:block>
+
+                        </th:block>
+
+                        <th:block th:if="${session.errorMsg}">
+                            <p class="text-danger fw-bold ">[[${session.errorMsg}]]</p>
+                            <th:block th:text="${@commonServiceImpl.removeSessionMessage}"></th:block>
+                        </th:block>
+
+
+                    </div>
+                    <div class="card-body">
+                        <form action="/api/items" method="post">
+                            <input type="hidden" name="id" th:value="${product.id}">
+                            <input type="hidden" name="type" th:value="${product.category}" hidden>
+                            <input type="hidden" name="imageUrl" th:value="${product.imageUrl}">
+                            <div class="mb-3">
+                                <label>Enter Name</label> <input type="text" name="name" th:value="${product.name}"
+                                    class="form-control">
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Enter Description</label>
+                                <textarea rows="3" cols="" class="form-control"
+                                    name="description">[[${product.description}]]</textarea>
+                            </div>
+
+
+
+                            <div class="mb-3">
+                                <label>Enter Price</label> <input type="number" name="price" th:value="${product.price}"
+                                    class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label>Enter Discount</label> <input type="number" name="discount"
+                                    th:value="${product.discount}" class="form-control">
+                            </div>
+
+
+                            <div class="mb-3 col">
+                                <label>Enter Stock</label> <input type="text" name="stock" th:value="${product.stock}"
+                                    class="form-control">
+                            </div>
+                            <div class="mb-3 col">
+                                <label>Enter Brand</label> <input type="text" name="brand" th:value="${product.brand}"
+                                    class="form-control">
+                            </div>
+                            <div class="mb-3 col">
+                                <label>Enter Model</label> <input type="text" name="model" th:value="${product.model}"
+                                    class="form-control">
+                            </div>
+                            <div class="mb-3 col">
+                                <label>Enter Date</label>
+                                <input type="date" name="date" th:value="${#dates.format(product.date, 'yyyy-MM-dd')}"
+                                    class="form-control">
+                            </div>
+
+                            <div class="mb-3 col">
+                                <label>Enter Stock</label> <input type="text" name="stock" th:value="${product.stock}"
+                                    class="form-control">
+                            </div>
+
+                            <div class="mb-3 col">
+                                <label>Enter Price</label> <input type="number" name="price" th:value="${product.price}"
+                                    class="form-control">
+                            </div>
+                            <div class="mb-3 col">
+                                <label>Enter Discount</label> <input type="number" name="discount"
+                                    th:value="${product.discount}" class="form-control">
+                            </div>
+                            <div class="mb-3 col">
+                                <label>Enter DiscountPrice</label> <input type="number" name="discountPrice"
+                                    th:value="${product.discountPrice}" class="form-control">
+                            </div>
+
+                            <div class="mt-1" style="margin-bottom: 30px; display: flex; justify-content: flex-end;">
+                                <img th:src="@{'/img/product_img/'+${product.imageUrl}}" width="100px" height="100px">
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <a class="btn btn-danger w-100" href="/admin/loadViewProduct">Return</a>
+                                </div>
+                                <div class="col-md-6">
+                                    <button class="btn btn-primary w-100" type="submit">Update</button>
+                                </div>
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $('form').on('submit', function (e) {
+            e.preventDefault(); // Ngăn chặn hành vi gửi form mặc định
+
+            // Tạo object chứa dữ liệu từ form
+            const formData = {
+                id: $('input[name="id"]').val(),
+                name: $('input[name="name"]').val(),
+                description: $('textarea[name="description"]').val(),
+                category: $('input[name="type"]').val(),
+                price: $('input[name="price"]').val(),
+                discount: $('input[name="discount"]').val(),
+                stock: $('input[name="stock"]').val(),
+                type: $('input[name="type"]').val(),
+                imageUrl: $('input[name="imageUrl"]').val(),
+                brand: $('input[name="brand"]').val(),
+                model: $('input[name="model"]').val(),
+                date: $('input[name="date"]').val(),
+                discountPrice: $('input[name="discountPrice"]').val()
+
+
+            };
+
+            // Gửi yêu cầu AJAX
+            $.ajax({
+                url: '/api/items',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function (response) {
+                    console.log('Update successful:', response);
+                },
+                error: function (error) {
+                    console.log('Update failed:', error);
+                }
+            });
+            window.location.href = "/admin/editProduct/" + formData.id;
+        });
+    </script>
+
+</body>
+
+</html>

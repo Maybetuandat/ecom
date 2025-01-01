@@ -1,0 +1,269 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+        integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div th:if="${showDialog}" class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" id="exampleModalLabel">Ecomerce</h5>
+                    <!-- Nút đóng modal -->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    You're not logged in. Please log in to continue view the cart
+                </div>
+                <div class="modal-footer">
+
+                    <a href="/login" class="btn btn-primary">Login</a>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+
+                    <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Hiển thị modal khi trang tải và showDialog là true
+        $(document).ready(function () {
+            if ($('#myModal').length) {
+                var myModal = new bootstrap.Modal(document.getElementById('myModal'), {
+
+                });
+                myModal.show();  // Hiển thị modal
+            }
+        });
+    </script>
+
+    <!-- Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Successfully</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hiển thị modal nếu có thông báo thành công -->
+    <th:block th:if="${session.successMsg}">
+        <script th:inline="javascript">
+            // Hiển thị modal khi có thông báo thành công
+            var myModal = new bootstrap.Modal(document.getElementById('successModal'));
+            myModal.show();
+        </script>
+        <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+    </th:block>
+
+
+
+
+
+
+
+
+    <div class="navbar-container" style="height: 100px;">
+        <nav class="navbar navbar-expand-lg bg-light">
+            <div class="container-fluid" style="height: 100px;">
+                <!-- Logo -->
+                <a class="navbar-brand text-primary" href="/" style="font-size: 3rem; margin-left: 100px;">Ecomerce</a>
+
+
+                <!-- Thanh tìm kiếm -->
+                <form class="d-flex flex-grow-1 mx-3" role="search" style="max-width: 50%; height: 50px;">
+                    <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search">
+                    <button class="btn btn-outline-primary" type="submit">Search</button>
+                </form>
+
+                <!-- Các icon gần thanh tìm kiếm -->
+                <div class="d-flex align-items-center ms-3">
+                    <!-- Icon trang chủ -->
+                    <a href="/" class="btn btn-light d-flex align-items-center text-primary me-3">
+                        <i class="bi bi-house-door" style="font-size: 1.5rem;"></i>
+                        <span class="ms-2">Home</span>
+                    </a>
+
+                    <!-- Icon tài khoản -->
+                    <!-- <a href="/login" class="btn btn-light d-flex align-items-center text-primary me-3">
+                        <i class="bi bi-person" style="font-size: 1.5rem;"></i>
+                        <span class="ms-2">Tài khoản</span>
+                    </a> -->
+
+                    <th:block th:if="${session.customer}">
+                        <a href="/account" class="btn btn-light d-flex align-items-center text-primary me-3">
+                            <i class="bi bi-person" style="font-size: 1.5rem;"></i>
+                            <span class="ms-2">Account</span>
+                        </a>
+                    </th:block>
+
+                    <th:block th:unless="${session.customer}">
+                        <a th:href="@{/login}" class="btn btn-light d-flex align-items-center text-primary me-3">
+                            <i class="bi bi-person" style="font-size: 1.5rem;"></i>
+                            <span class="ms-2">Login</span>
+                        </a>
+                    </th:block>
+
+
+
+
+                    <!-- Icon giỏ hàng -->
+                    <a href="/viewCart" class="btn btn-light position-relative">
+                        <i class="bi bi-cart text-primary" style="font-size: 1.5rem;"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                            th:text="${numberOfItemInCart}">
+                            0
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+
+    <div class="d-flex flex-grow-1">
+        <!-- Sidebar -->
+
+
+
+
+
+
+
+        <div class="sidebar" style="font-size: 20px;">
+            <h5 class="fw-bold p-3 text-primary">Categories</h5>
+            <ul class="category-list">
+                <li>
+                    <img src="img/category_img/book.jpg" alt="" width="100%" height="100%">
+                    <div>Books</div>
+                </li>
+                <li>
+                    <img src="img/category_img/clothes.png" alt="" width="100%" height="100%">
+                    <div>Clothes</div>
+                </li>
+                <li>
+                    <img src="img/category_img/laptop.jpg" alt="" width="100%" height="100%">
+                    <div>Laptop</div>
+                </li>
+                <li>
+                    <img src="img/category_img/mobilephones.jpg" alt="" width="100%" height="100%">
+                    <div>Mobile phones</div>
+                </li>
+                <li>
+                    <img src="img/category_img/shoes.webp" alt="" width="100%" height="100%">
+                    <div>Shoes</div>
+                </li>
+                <li>
+                    <img src="img/category_img/electronics.png" alt="" width="100%" height="100%">
+                    <div>Electronics</div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Slider -->
+        <div class="slider-container">
+            <div id="carouselExample" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="img/ecom1.png" class="d-block w-100" alt="...">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="img/ecom3.jpg" class="d-block w-100" alt="...">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="img/ecom2.jpg" class="d-block w-100" alt="...">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="img/image.png" class="d-block w-100" alt="...">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="img/best-ecommerce-books.webp" class="d-block w-100" alt="..." height="100%">
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row" style="margin-left: 20px;margin-top: 50px;">
+            <div class="col-md-3 mb-4" th:each="product : ${products}">
+                <a th:href="@{'/products/' + ${product.id}}"
+                    style="text-decoration: none; color: inherit; cursor: pointer;">
+                    <div class="card" style="height: 600px; cursor: pointer;">
+                        <img th:src="@{'/img/product_img/'+${product.imageUrl}}" class="card-img-top"
+                            th:alt="${product.name}" height="350px" width="200px">
+                        <div class="card-body text-center" style="font-size: 18px;">
+                            <div class="card-title " th:text="${product.name}">Product Name</div>
+                            <div class="card-title text-danger"
+                                th:text="${#numbers.formatDecimal(product.discountPrice, 0, 'COMMA', 0, 'NONE') + ' $'}">
+                                price
+                            </div>
+                            <p class="text-muted" th:if="${product.price != null && product.discount != 0}">
+                                <del
+                                    th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'NONE') + ' $'}"></del>
+                            <p class="text-danger" th:if="${product.discount != 0}">
+                                Giảm <span th:text="${product.discount}">%</span>%
+                            </p>
+                            </p>
+                            <a th:href="@{'/addToCart/' +${product.id} }" class="btn btn-primary">Add To Cart</a>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+
+</body>
+
+</html>
