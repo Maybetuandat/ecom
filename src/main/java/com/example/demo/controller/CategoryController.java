@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.model.Category;
+import com.example.demo.model.Customer;
 import com.example.demo.model.Item;
 import com.example.demo.service.CategoryService;
+import com.example.demo.service.CustomerService;
 import com.example.demo.service.ItemService;
 
 import jakarta.servlet.http.HttpSession;
@@ -32,13 +34,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequestMapping("/admin")
-public class AdminController {
+public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
 
     @Autowired
     private ItemService productService;
+
+    @Autowired
+    CustomerService customerService;
 
     @GetMapping({ "/", "" })
     public String index() {

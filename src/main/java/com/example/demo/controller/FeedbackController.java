@@ -28,9 +28,9 @@ public class FeedbackController {
 
     @GetMapping("/review_product/{id}")
     public String addCommentAndRaString(@PathVariable int id, Model model, HttpSession session) {
-        // Item product = productService.getItemById(id);
-        // session.setAttribute("product", product);
-        // model.addAttribute("product", product);
+        Item product = productService.getItemById(id);
+        session.setAttribute("product", product);
+        model.addAttribute("product", product);
         return "review_product";
     }
 

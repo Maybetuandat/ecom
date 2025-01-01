@@ -10,7 +10,7 @@
 <body>
     <div class="container mt-5">
         <!-- Hiển thị tên sản phẩm -->
-        <h1 class="text-center">Leave a Review for: <span th:text="${product.title}">Product Name</span></h1>
+        <h1 class="text-center">Leave a Review for: <span th:text="${product.name}">Product Name</span></h1>
 
         <!-- Form để thu thập Comment và Rating -->
         <form action="/review" method="post">

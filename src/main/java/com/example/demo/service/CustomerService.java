@@ -18,4 +18,12 @@ public interface CustomerService {
     public Customer getCustomerByEmail(String email);
 
     public List<CartItem> findByCustomerId(int customerId);
+
+    public List<Customer> getAllCustomers();
+
+    public void updateCustomer(Customer customer);
+
+    public void deleteCustomer(int customerId);
+
+    public Customer getCustomerById(int customerId);
 }

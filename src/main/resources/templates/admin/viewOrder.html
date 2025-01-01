@@ -108,6 +108,25 @@
             font-size: 2rem;
             color: #007bff;
         }
+
+        .btn-back {
+            background-color: #2980b9;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 30px;
+            text-align: center;
+            float: right;
+            /* Đặt nút ở góc phải */
+        }
+
+        .btn-back:hover {
+            background-color: #3498db;
+        }
     </style>
 </head>
 
@@ -166,6 +185,10 @@
                 You don't have any orders yet.
             </div>
         </th:block>
+
+        <!-- Nút quay lại -->
+        <a href="/admin" class="btn-back">Back</a>
+
     </div>
 
     <!-- Bootstrap JS và các thư viện liên quan -->

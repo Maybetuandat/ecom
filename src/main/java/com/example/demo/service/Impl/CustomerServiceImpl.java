@@ -38,4 +38,35 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findById(customerId).get().getItems();
     }
 
+    @Override
+    public List<Customer> getAllCustomers() {
+        return customerRepository.findAll();
+    }
+
+    @Override
+    public void updateCustomer(Customer customer) {
+        // TODO Auto-generated method stub
+        Customer customerToUpdate = customerRepository.findById(customer.getId()).get();
+        customerToUpdate.setEmail(customer.getEmail());
+        customerToUpdate.setFullname(customer.getFullname());
+        customerToUpdate.setPassword(customer.getPassword());
+        customerToUpdate.setPhone(customer.getPhone());
+        customerToUpdate.setAddress(customer.getAddress());
+        customerToUpdate.setStatus(customer.getStatus());
+        customerToUpdate.setUsername(customer.getUsername());
+        customerRepository.save(customerToUpdate);
+
+    }
+
+    @Override
+    public void deleteCustomer(int customerId) {
+        // TODO Auto-generated method stub
+        customerRepository.deleteById(customerId);
+    }
+
+    @Override
+    public Customer getCustomerById(int customerId) {
+        return customerRepository.findById(customerId).get();
+    }
+
 }
